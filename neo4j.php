@@ -29,12 +29,11 @@ function createNodeProductNeo4j($Product,$storeID){
   remove relationship with category, if there is*/
 
   // create only one node Products and relationship with store
-  $q0 = "MATCH (s:Store {id:{idStore}})"; //query seach store
-  $q1 =  "MERGE (p:Product {id:{idProduct}, storeID:{idStore}}) set p.name={nameProduct} set p.brands={brandsProduct}"; // query to create Product
-  $q2 = " MERGE (s)-[:Has]->(p)"; // query to create relationship Product and Store
-  $d0 = " WITH p MATCH (p)-[pc:BelongsTo]->() "; // query to seach product relationship with  category
-  $d1 = 'DELETE pc'; // delete relationship
-  $query =$q0.$q1.$q2.$d0.$d1;
+  $query = 'MATCH (s:Store {id:{idStore}})'; //query seach store
+  $query .= ' MERGE (p:Product {id:{idProduct}, storeID:{idStore}}) set p.name={nameProduct} set p.brands={brandsProduct}'; // query to create Product
+  $query .= ' MERGE (s)-[:Has]->(p)'; // query to create relationship Product and Store
+  $query .= ' WITH p MATCH (p)-[pc:BelongsTo]->()'; // query to seach product relationship with  category
+  $query .= ' DELETE pc'; // delete relationship
   // parametrs for products, id, name and brands
   $parameters = array('idProduct' =>  $Product['_id'],'nameProduct' => $Product['name'],
                      'brandsProduct' => $vBrands,
