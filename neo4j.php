@@ -35,10 +35,12 @@ function createNodeProductNeo4j($Product,$storeID){
   $query .= ' WITH p MATCH (p)-[pc:BelongsTo]->()'; // query to seach product relationship with  category
   $query .= ' DELETE pc'; // delete relationship
   // parametrs for products, id, name and brands
-  $parameters = array('idProduct' =>  $Product['_id'],'nameProduct' => $Product['name'],
-                     'brandsProduct' => $vBrands,
-                     'idStore:' => $storeID
-                    ); //
+  $parameters = array(
+    'idProduct' =>  $Product['_id'],
+    'nameProduct' => $Product['name'],
+    'brandsProduct' => $vBrands,
+    'idStore:' => $storeID
+  );
   /* execute query */
   $client->sendCypherQuery($query, $parameters);
   /* check categories, create category node and relationship with product and store, if the product has category */
