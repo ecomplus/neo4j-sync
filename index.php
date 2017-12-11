@@ -72,18 +72,17 @@ function getProduct($storeID){
 }
 
 function getOrder($storeID){
-  $varAllOrder = getUrl("https://sandbox.e-com.plus/v1/orders.json",$storeID);
-  $allOrder = $varAllOrder["result"]; // Filter Object to display only products and their properties
+  $allOrder = getOrderNeo4j($storeID); // get orders from a store
   // for each order, create node and relationship with products
   for ($i=0; $i <count($allOrder) ; $i++)   {
-    $order = getUrl("https://sandbox.e-com.plus/v1/orders/".$allOrder[$i]["_id"],$storeID);
+    $order = getUrl("https://sandbox.e-com.plus/v1/orders/".$allOrder[$i]["id"],$storeID);
     // createOrderNeo4j($order[$i],$storeID);
   }
 }
 /* script run */
 $store = getStoreNeo4j(); //Get all the stores on Neo4j, which are returned in an array
 // for each Store,  get all products and save on Neo4j
-var_dump($store);
+// var_dump($store);
 for ($i=0; $i <count($store) ; $i++) {
   getProduct($store[$i]['id']);
   ///getOrder($store[$i]['id']);
