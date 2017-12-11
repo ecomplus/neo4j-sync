@@ -139,14 +139,13 @@ function createOrderNeo4j($order,$storeID){
   $client = $GLOBALS['client']; // retrieves value from global client variable and saves to a local client variable
   if (is_array($order['items'])){
     $allProducts = $order['items'];
+    $parameters = array(
+      'idOrder' => $order['_id'],
+      'idStore' => $storeID
+    ); // parametrs for seach
     for ($i=0; $i <count($allProducts) ; $i++) {
       // create relationships with Products and orders
-      $productID = $allProducts[$i]['product_id']; // get product id
-      $parameters = array(
-        'idOrder' => $order['_id'],
-        'idStore' => $storeID,
-        'productId' =>$productID
-      ); // parametrs for seach
+      $parameters['productId'] = $allProducts[$i]['product_id'];
       $query = 'MATCH (o:Order {id:{idOrder},storeID:{idStore}})'; // marge or match
       $query .= 'MATCH (p:Product {id:{productId},storeID:{idStore}})'; // seach product by id
       $query .= 'MERGE (p)-[:Buy]->(o)'; // create relationship product
