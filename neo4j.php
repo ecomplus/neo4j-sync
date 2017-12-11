@@ -91,8 +91,7 @@ function deleteStoreByIdNeo4j($storeID){// function to delete the store node, al
   $client->sendCypherQuery($query, $parameters); // execute query with parametrs
   //**********
   $query = 'MATCH (p:Product {storeID:{storeId}})'; // query to seach product by StoryId
-  $query .= 'DELETE p'; // delete Nodes Product
-  $query = $q1.$d1; // concatenates queres
+  $query .= ' DELETE p'; // delete Nodes Product
   $client->sendCypherQuery($query, $parameters); // execute query with parametrs
   //**********
   $query = 'MATCH (s:Store {id:{storeId}})'; // query to seach store by id
@@ -125,12 +124,12 @@ function getStoreNeo4j(){
   $result = $client->sendCypherQuery($query);// function seach Store
   $publicResult = $result->getBody(); /* get public reponse, because $result is protected
   see ../vendor/neoxygen/neoClient/src/Request/Response.php */
-  $response = $publicResult["results"][0]["data"];
+  $response = $publicResult['results'][0]['data'];
   // filtering results
   /* exemple of filtering */
   $res = [];
   for ($i=0; $i < count($response) ; $i++) {
-    $sid = $response[$i]["row"][0]['id'];
+    $sid = $response[$i]['row'][0]['id'];
     array_push($res,array('id' => $sid) );
   }
   return $res; // return result
@@ -164,12 +163,12 @@ function getOrderNeo4j($storeID){
   $result = $client->sendCypherQuery($query, $parameters);// function to search orders from a store
   $publicResult = $result->getBody(); /* get public reponse, because $result is protected
   see ../vendor/neoxygen/neoClient/src/Request/Response.php */
-  $response = $publicResult["results"][0]["data"];
+  $response = $publicResult['results'][0]['data'];
   // filtering results
   /* exemple of filtering */
   $res = [];
   for ($i=0; $i < count($response) ; $i++) {
-    $sid = $response[$i]["row"][0]['id'];
+    $sid = $response[$i]['row'][0]['id'];
     array_push($res,array('id' => $sid) );
   }
   return $res; // return result
