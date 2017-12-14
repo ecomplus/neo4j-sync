@@ -124,7 +124,7 @@ function getOrder($storeID)
                     // reseat attempts
                     $attempts = 0;
                     echo 'Error: Unexpected '.$order['message'].
-          'more than three attempts were made Order id: '.$allOrder[$i]['id'];
+                    'more than three attempts were made Order id: '.$allOrder[$i]['id'];
                     echo PHP_EOL;
                 }
             }
