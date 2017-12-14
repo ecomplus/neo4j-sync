@@ -39,7 +39,7 @@ function getUrl($url, $storeID)
 // function to get products
 function getProduct($storeID)
 {
-    // usleep ( 500 ); // pauses the script 500 milliseconds, to conduct a new store query
+    usleep(500); // pauses the script 500 milliseconds, to conduct a new store query
     // Object with all products
     $varAllProduct = getUrl('https://api.e-com.plus/v1/products.json', $storeID);
     // for each product, create node in NEO4J with the _id, sku, name and brand property.
@@ -79,7 +79,7 @@ function getProduct($storeID)
                     // reseat attempts
                     $attempts = 0;
                     echo 'Error: Unexpected '.$Product['message'].
-          'more than three attempts were made Product id: '.$allProduct[$i]['_id'];
+                    'more than three attempts were made Product id: '.$allProduct[$i]['_id'];
                     echo PHP_EOL;
                 }
             }
