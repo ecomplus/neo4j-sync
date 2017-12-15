@@ -5,15 +5,22 @@
  *
  */
 
-//            https://ecomstore.docs.apiary.io/#reference/products/all-products/list-all-store-products
-//            https://neo4j.com/docs/developer-manual/current/
-//            https://github.com/neoxygen/neo4j-neoclient
+// https://ecomstore.docs.apiary.io/#reference/products/all-products/list-all-store-products
+// https://neo4j.com/docs/developer-manual/current/
+// https://github.com/neoxygen/neo4j-neoclient
 
-require_once 'neo4j.php';
+if (isset($argv[1])) {
+    $user = $argv[1];
+}
+if (isset($argv[2])) {
+    $password = $argv[2];
+}
+require 'neo4j.php';
+
 // function to get Json in the page, using cURL
 function getUrl($url, $storeID)
 {
-    //  Initiate curl
+    // Initiate curl
     $ch = curl_init();
     // Set the url
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -23,9 +30,9 @@ function getUrl($url, $storeID)
     curl_setopt($ch, CURLOPT_HEADER, false);
     // Send header to requisition
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'Content-Type: application/json',
-    'X-Store-ID:'.$storeID,
-  ]);
+      'Content-Type: application/json',
+      'X-Store-ID:'.$storeID,
+    ]);
     // Execute
     $result = curl_exec($ch);
     // Closing
@@ -55,10 +62,10 @@ function getProduct($storeID)
                 // if the status is equal to 412, no store found with this ID, exclude store in neo4j, if it exists
                 // Function to delete store in Neo4j that no longer exists
                 deleteStoreByIdNeo4j($storeID);
-                //break;
+                // break;
             } elseif (404 === $Product['status']) {
                 // if the status is equal to 404, no product found with this ID, delete the product in neo4j, if it exists
-                //function to delete product node
+                // function to delete product node
                 deleteProductNeo4j($storeID, $allProduct[$i]['_id']);
             } elseif ($Product['status'] >= 400 and $Product['status'] <= 499) {
                 // to try error 4xx
@@ -81,6 +88,8 @@ function getProduct($storeID)
                     echo 'Error: Unexpected '.$Product['message'].
                     'more than three attempts were made Product id: '.$allProduct[$i]['_id'];
                     echo PHP_EOL;
+                    // keep server alive
+                    sleep(5);
                 }
             }
         } else {
@@ -126,6 +135,8 @@ function getOrder($storeID)
                     echo 'Error: Unexpected '.$order['message'].
                     'more than three attempts were made Order id: '.$allOrder[$i]['id'];
                     echo PHP_EOL;
+                    // keep server alive
+                    sleep(5);
                 }
             }
         } else {
@@ -136,8 +147,9 @@ function getOrder($storeID)
         usleep(500);
     }
 }
+
 // script run
-//Get all the stores on Neo4j, which are returned in an array
+// Get all the stores on Neo4j, which are returned in an array
 $store = getStoreNeo4j();
 // for each Store,  get all products and save on Neo4j
 for ($i = 0; $i < count($store); ++$i) {
