@@ -197,7 +197,7 @@ function getProduct($storeID)
     $attempts = 0;
     for ($i = 0; $i < count($allProduct); ++$i) {
         $Product = getUrl('https://api.e-com.plus/v1/products/'.$allProduct[$i]['_id'].'.json', $storeID);
-  	    createNode($Product[$i], $storeID);
+        createNode($Product[$i], $storeID);
         createRelationship( $storeID$Product[$i]);
     }
 }
