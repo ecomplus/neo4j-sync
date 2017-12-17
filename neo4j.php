@@ -10,10 +10,14 @@ require_once 'vendor/autoload.php';
 use Neoxygen\NeoClient\ClientBuilder;
 
 // DB User
-$user = 'wis';
- //User Password
-$password = 'neo4j';
- // create connection Neo4j
+if (!isset($user)) {
+    $user = 'wis';
+}
+// User Password
+if (!isset($password)) {
+    $password = 'neo4j';
+}
+// create connection Neo4j
 $client = ClientBuilder::create()
 // initial connection
     ->addConnection('default', 'http', 'localhost', 7474, true, $user, $password)
@@ -55,13 +59,13 @@ function createNodeProductNeo4j($Product, $storeID)
     $query .= ' WITH p MATCH (p)-[pc:BelongsTo]->()';
     // delete relationship
     $query .= ' DELETE pc';
-    // parametrs for products, id, name and brands
-    $parameters = [
-    'idProduct' => $Product['_id'],
-    'nameProduct' => $Product['name'],
-    'brandsProduct' => $vBrands,
-    'idStore:' => $storeID,
-  ];
+    // parametres for products, id, name and brands
+    $parameters = array(
+        'idProduct' => $Product['_id'],
+        'nameProduct' => $Product['name'],
+        'brandsProduct' => $vBrands,
+        'idStore' => $storeID
+    );
     // execute query
     $client->sendCypherQuery($query, $parameters);
     // check categories, create category node and relationship with product and store, if the product has category
@@ -73,20 +77,16 @@ function createNodeProductNeo4j($Product, $storeID)
             // query to create Product
             $query .= ' MATCH (p:Product {id:{idProduct}, storeID:{idStore}})';
             // query to create Category
-            $query .= ' MERGE (c:Category {id:{idCategory}, storeID :{idStore}}) set c.name = {nameCategory}';
+            $query .= ' MERGE (c:Category {id:{idCategory}, storeID:{idStore}}) set c.name = {nameCategory}';
             // query to create relationship Product and Category
             $query .= ' MERGE (p)-[:BelongsTo]->(c)';
             // query to create relationship Category and Store
             $query .= ' MERGE (s)-[:Has]->(c)';
             // parametrs for query
             // parametrs for products, id, name, brands and StoreId
-            $parameters = [
-        'idProduct' => $Product['_id'], 'nameProduct' => $Product['name'],
-        'idStore:' => $storeID,
-        // parametrs for category, id and name
-        'idCategory' => $Product['categoreis'][$i]['_id'],
-        'nameCategory' => $Product['categoreis'][$i]['name'],
-        ];
+            // parametrs for category, id and name
+            $parameters['idCategory'] = $Product['categoreis'][$i]['_id'];
+            $parameters['nameCategory'] = $Product['categoreis'][$i]['name'],
             // execute query
             $client->sendCypherQuery($query, $parameters);
         }
@@ -151,6 +151,7 @@ function deleteStoreByIdNeo4j($storeID)
     $client->sendCypherQuery($query, $parameters);
     //**********
 }
+
 function deleteProductNeo4j($storeID, $productID)
 {
     // function to delete the product node
@@ -160,21 +161,21 @@ function deleteProductNeo4j($storeID, $productID)
     $parameters = ['storeId' => $storeID, 'productId' => $productID];
     //**********
     // query to search product relationship with order
-    $query = 'MATCH (p:Product {id:{productId},storeID:{storeId}}) MATCH (p)-[po:Buy]->()';
+    $query = 'MATCH (p:Product {id:{productId}, storeID:{storeId}}) MATCH (p)-[po:Buy]->()';
     // delete relationship
     $query .= ' DELETE po';
     // execute query with parametrs
     $client->sendCypherQuery($query, $parameters);
     //**********
     // query to seach product relationship with  category
-    $query = 'MATCH (p:Product {id:{productId},storeID:{storeId}}) MATCH (p)-[pc:BelongsTo]->()';
+    $query = 'MATCH (p:Product {id:{productId}, storeID:{storeId}}) MATCH (p)-[pc:BelongsTo]->()';
     // delete relationship
     $query .= ' DELETE pc';
     // execute query with parametrs
     $client->sendCypherQuery($query, $parameters);
     //**********
     // query to seach product by StoryId
-    $query = 'MATCH (p:Product {id:{productId},storeID:{storeId}})';
+    $query = 'MATCH (p:Product {id:{productId}, storeID:{storeId}})';
     // delete Nodes Product
     $query .= ' DELETE p';
     // execute query with parametrs
@@ -211,17 +212,17 @@ function createOrderNeo4j($order, $storeID)
     if (is_array($order['items'])) {
         $allProducts = $order['items'];
         // parametrs for seach
-        $parameters = [
-      'idOrder' => $order['_id'],
-      'idStore' => $storeID,
-        ];
+        $parameters = array(
+            'idOrder' => $order['_id'],
+            'idStore' => $storeID
+        );
         for ($i = 0; $i < count($allProducts); ++$i) {
             // create relationships with Products and orders
             $parameters['productId'] = $allProducts[$i]['product_id'];
             // marge or match
-            $query = 'MATCH (o:Order {id:{idOrder},storeID:{idStore}})';
+            $query = 'MATCH (o:Order {id:{idOrder}, storeID:{idStore}})';
             // seach product by id
-            $query .= 'MATCH (p:Product {id:{productId},storeID:{idStore}})';
+            $query .= 'MATCH (p:Product {id:{productId}, storeID:{idStore}})';
             // create relationship product
             $query .= 'MERGE (p)-[:Buy]->(o)';
             // execute query with parametrs
@@ -264,14 +265,14 @@ function deleteOrderNeo4j($storeID, $orderID)
     $parameters = ['storeId' => $storeID, 'ordertId' => $orderID];
     //**********
     // query seach Order by StoreId and id
-    $query = 'MATCH (o:Order {id:{orderId},storeID:{storeId}}) MATCH ()-[po:Buy]->(o)';
+    $query = 'MATCH (o:Order {id:{orderId}, storeID:{storeId}}) MATCH ()-[po:Buy]->(o)';
     // delete relationship
     $query .= ' DELETE po';
     // execute query with parametrs
     $client->sendCypherQuery($query, $parameters);
     //**********
     // query to seach order by StoryId and id
-    $query = 'MATCH (o:Order {id:{orderId},storeID:{storeId}})';
+    $query = 'MATCH (o:Order {id:{orderId}, storeID:{storeId}})';
     // delete Node Order
     $query .= ' DELETE o';
     // execute query with parametrs
