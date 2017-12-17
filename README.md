@@ -197,8 +197,8 @@ function getProduct($storeID)
     $attempts = 0;
     for ($i = 0; $i < count($allProduct); ++$i) {
         $Product = getUrl('https://api.e-com.plus/v1/products/'.$allProduct[$i]['_id'].'.json', $storeID);
-  	createNode($Product[$i], $storeID);
-createRelationship( $storeID$Product[$i]);
+        createNode($Product[$i], $storeID);
+        createRelationship( $storeID$Product[$i]);
     }
 }
 ```
@@ -207,7 +207,7 @@ Function to get the stores in neo4j and run the function to get of API and creat
 index.php
 <?php
 // script run
-//Get all the stores on Neo4j, which are returned in an array
+// Get all the stores on Neo4j, which are returned in an array
 $store = getStoreNeo4j();
 // for each Store,  get all products and save on Neo4j
 for ($i = 0; $i < count($store); ++$i) {
