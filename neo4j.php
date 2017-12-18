@@ -5,7 +5,7 @@
  *
  */
 
-require_once 'vendor/autoload.php';
+require 'composer/vendor/autoload.php';
 // add libary Neo4J
 use Neoxygen\NeoClient\ClientBuilder;
 
