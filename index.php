@@ -161,9 +161,10 @@ $store = getStoreNeo4j();
 for ($i = 0; $i < count($store); ++$i) {
     echo 'Store #'.$store[$i]['id'];
     echo PHP_EOL;
-    
+
     getProduct($store[$i]['id']);
     getOrder($store[$i]['id']);
+    updateStore($store[$i]['id'], date('h:i:s'));
 }
 
 echo 'End: Neo4j Sync';

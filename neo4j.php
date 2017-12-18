@@ -185,7 +185,8 @@ function deleteProductNeo4j($storeID, $productID)
 
 function getStoreNeo4j()
 {
-    $client = $GLOBALS['client']; // retrieves value from global client variable and saves to a local client variable
+    // retrieves value from global client variable and saves to a local client variable
+    $client = $GLOBALS['client'];
     //cypher to ..
     $query = 'MATCH (s:Store) RETURN s';
     // function seach Store
@@ -278,4 +279,16 @@ function deleteOrderNeo4j($storeID, $orderID)
     // execute query with parametrs
     $client->sendCypherQuery($query, $parameters);
     //**********
+}
+
+function updateStore($storeID, $date)
+{
+    $client = $GLOBALS['client'];
+    // query creates update property on store node
+    $query = 'MATCH (s:Store {id:{idStore}}) set s.update = {date}';
+    $parameters = [
+      'idStore' => $storeID,
+      'date' => $date,
+    ];
+    $client->sendCypherQuery($query, $parameters);
 }
