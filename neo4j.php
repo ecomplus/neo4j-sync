@@ -60,12 +60,12 @@ function createNodeProductNeo4j($Product, $storeID)
     // delete relationship
     $query .= ' DELETE pc';
     // parametres for products, id, name and brands
-    $parameters = array(
+    $parameters = [
         'idProduct' => $Product['_id'],
         'nameProduct' => $Product['name'],
         'brandsProduct' => $vBrands,
-        'idStore' => $storeID
-    );
+        'idStore' => $storeID,
+    ];
     // execute query
     $client->sendCypherQuery($query, $parameters);
     // check categories, create category node and relationship with product and store, if the product has category
@@ -86,7 +86,7 @@ function createNodeProductNeo4j($Product, $storeID)
             // parametrs for products, id, name, brands and StoreId
             // parametrs for category, id and name
             $parameters['idCategory'] = $Product['categoreis'][$i]['_id'];
-            $parameters['nameCategory'] = $Product['categoreis'][$i]['name'],
+            $parameters['nameCategory'] = $Product['categoreis'][$i]['name'];
             // execute query
             $client->sendCypherQuery($query, $parameters);
         }
@@ -212,10 +212,10 @@ function createOrderNeo4j($order, $storeID)
     if (is_array($order['items'])) {
         $allProducts = $order['items'];
         // parametrs for seach
-        $parameters = array(
+        $parameters = [
             'idOrder' => $order['_id'],
-            'idStore' => $storeID
-        );
+            'idStore' => $storeID,
+        ];
         for ($i = 0; $i < count($allProducts); ++$i) {
             // create relationships with Products and orders
             $parameters['productId'] = $allProducts[$i]['product_id'];
