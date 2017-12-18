@@ -9,6 +9,12 @@
 // https://neo4j.com/docs/developer-manual/current/
 // https://github.com/neoxygen/neo4j-neoclient
 
+echo PHP_EOL;
+echo date('d/m h:i:s');
+echo PHP_EOL;
+echo 'Start: Neo4j Sync';
+echo PHP_EOL;
+
 if (isset($argv[1])) {
     $user = $argv[1];
 }
@@ -153,6 +159,14 @@ function getOrder($storeID)
 $store = getStoreNeo4j();
 // for each Store,  get all products and save on Neo4j
 for ($i = 0; $i < count($store); ++$i) {
+    echo 'Store #'.$store[$i]['id'];
+    echo PHP_EOL;
+    
     getProduct($store[$i]['id']);
     getOrder($store[$i]['id']);
 }
+
+echo 'End: Neo4j Sync';
+echo PHP_EOL;
+echo date('h:i:s');
+echo PHP_EOL;
