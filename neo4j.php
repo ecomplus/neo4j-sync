@@ -61,10 +61,10 @@ function createNodeProductNeo4j($Product, $storeID)
     $query .= ' DELETE pc';
     // parametres for products, id, name and brands
     $parameters = [
-        'idProduct' => $Product['_id'],
-        'nameProduct' => $Product['name'],
-        'brandsProduct' => $vBrands,
-        'idStore' => $storeID,
+      'idProduct' => $Product['_id'],
+      'nameProduct' => $Product['name'],
+      'brandsProduct' => $vBrands,
+      'idStore' => $storeID,
     ];
     // execute query
     $client->sendCypherQuery($query, $parameters);
