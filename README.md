@@ -1,20 +1,21 @@
 ![logo](https://avatars3.githubusercontent.com/u/34305306?s=200&v=4"Logo")
 # ecomplus-neo4j
-PHP scripts to sync Neo4j (recommendations DB) with E-Com Plus API [[1]]
+PHP scripts to sync Neo4j (recommendations DB) with E-Com Plus Store API [[1]]
 # Summary
-1. [Introduction](https://github.com/ecomclub/ecomplus-neo4j#introduction)
-   * [Requirements](https://github.com/ecomclub/ecomplus-neo4j#requirements)
-   * [Installing dependency manager for PHP](https://github.com/ecomclub/ecomplus-neo4j#installing-dependency-manager-for-php)
-   * [Dependency installation](https://github.com/ecomclub/ecomplus-neo4j#dependency-installation)
-2. [Settings and basic usage](https://github.com/ecomclub/ecomplus-neo4j#settings-and-basic-usage)
-   * [Neo4j Settings](https://github.com/ecomclub/ecomplus-neo4j#neo4j-settings)
-   * [Basic use](https://github.com/ecomclub/ecomplus-neo4j#basic-use)
-     * [Installing the Neo4j library in php](https://github.com/ecomclub/ecomplus-neo4j#installing-the-neo4j-library-in-php)
-     * [Creating a node in Neo4j](https://github.com/ecomclub/ecomplus-neo4j#creating-a-node-in-neo4j)
-     * [Creating relationship in Neo4j](https://github.com/ecomclub/ecomplus-neo4j#creating-relationship-in-neo4j)
-     * [Get node of the Neo4j](https://github.com/ecomclub/ecomplus-neo4j#get-node-of-the-neo4j)
-     * [Get API Product and create nodes](https://github.com/ecomclub/ecomplus-neo4j#get-api-product-and-create-nodes)
-3. [Reference](https://github.com/ecomclub/ecomplus-neo4j#reference)
+1. [Introduction](#introduction)
+   * [Requirements](#requirements)
+   * [Installing dependency manager for PHP](#installing-dependency-manager-for-php)
+   * [Dependency installation](#dependency-installation)
+2. [Settings and basic usage](#settings-and-basic-usage)
+   * [Neo4j Settings](#neo4j-settings)
+   * [Basic use](#basic-use)
+     * [Installing the Neo4j library in php](#installing-the-neo4j-library-in-php)
+     * [Creating a node in Neo4j](#creating-a-node-in-neo4j)
+     * [Creating relationship in Neo4j](#creating-relationship-in-neo4j)
+     * [Get node of the Neo4j](#get-node-of-the-neo4j)
+     * [Get API Product and create nodes](#get-api-product-and-create-nodes)
+3. [E-Com Plus Graphs API](#e-com-plus-graphs-api)
+4. [Reference](#reference)
 
 # Introduction
 [Neo4j](https://neo4j.com/) is a non-relational graph-oriented database and is very common in social networks.
@@ -89,10 +90,10 @@ neo4j.php
 function createNode($storeID,$Product)
 {
     // start string Brands as empty
-    $Brands = 'exemple';   
-    // create only one node Products 
+    $Brands = 'exemple';
+    // create only one node Products
     // query to create Product
-    $query .= ' MERGE (p:Product {id:{idProduct}, storeID:{idStore}}) set p.name={nameProduct} set p.brands={brandsProduct}'; 
+    $query .= ' MERGE (p:Product {id:{idProduct}, storeID:{idStore}}) set p.name={nameProduct} set p.brands={brandsProduct}';
     // parametrs for products, id, name and brands
     $parameters = [
       'idProduct' => $Product['_id'],
@@ -151,7 +152,7 @@ function getStoreNeo4j()
 ```
 ### Get API Product and create nodes
 To get all the products of a store in the API, you need to get the store ID on Neo4j, since they are only available in the database. Soon after obtaining the ids of the stores, for each store will be listed all products and for each product listed, a product node will be created with the properties of that product and the store ID. To get the json of the API response, the functions `curl_()` and `json_decode()`.
-Function used to get json from a store in the API: 
+Function used to get json from a store in the API:
 ```php
 index.php
 <?php
@@ -180,7 +181,7 @@ function getUrl($url, $storeID)
     return $varRes;
 }
 ```
-Function to get product in API and create the node: 
+Function to get product in API and create the node:
 ```php
 index.php
 <?php
@@ -202,7 +203,7 @@ function getProduct($storeID)
     }
 }
 ```
-Function to get the stores in neo4j and run the function to get of API and create the products node, this function is responsible for running the whole script: 
+Function to get the stores in neo4j and run the function to get of API and create the products node, this function is responsible for running the whole script:
 ```php
 index.php
 <?php
@@ -216,6 +217,14 @@ for ($i = 0; $i < count($store); ++$i) {
 
 ```
 
+
+
+
+# E-Com Plus Graphs API
+Neo4j data is public at the _E-Com Plus Graphs REST API_,
+documentation is available here:
+
+https://ecomgraphs.docs.apiary.io/#
 
 
 
