@@ -62,22 +62,22 @@ function getProduct($storeID)
     // attempts for eventual error
     $attempts = 0;
     for ($i = 0; $i < count($allProduct); ++$i) {
-        $Product = getUrl('https://api.e-com.plus/v1/products/'.$allProduct[$i]['_id'].'.json', $storeID);
-        if (array_key_exists('error_code', $Product)) {
-            if (412 === $Product['status']) {
+        $product = getUrl('https://api.e-com.plus/v1/products/'.$allProduct[$i]['_id'].'.json', $storeID);
+        if (array_key_exists('error_code', $product)) {
+            if (412 === $product['status']) {
                 // if the status is equal to 412, no store found with this ID, exclude store in neo4j, if it exists
                 // Function to delete store in Neo4j that no longer exists
                 deleteStoreByIdNeo4j($storeID);
                 // break;
-            } elseif (404 === $Product['status']) {
+            } elseif (404 === $product['status']) {
                 // if the status is equal to 404, no product found with this ID, delete the product in neo4j, if it exists
                 // function to delete product node
                 deleteProductNeo4j($storeID, $allProduct[$i]['_id']);
-            } elseif ($Product['status'] >= 400 and $Product['status'] <= 499) {
+            } elseif ($product['status'] >= 400 and $product['status'] <= 499) {
                 // to try error 4xx
-                echo 'Error: Unexpected '.$Product['message'].' Product id: '.$allProduct[$i]['_id'];
+                echo 'Error: Unexpected '.$product['message'].' Product id: '.$allProduct[$i]['_id'];
                 echo PHP_EOL;
-            } elseif ($Product['status'] >= 500 and $Product['status'] <= 599) {
+            } elseif ($product['status'] >= 500 and $product['status'] <= 599) {
                 // to try error 5xx
                 if ($attempts < 3) {
                     // only 3 attempts are allowed
@@ -91,7 +91,7 @@ function getProduct($storeID)
                     // exceeded the number of attempts allowed
                     // reseat attempts
                     $attempts = 0;
-                    echo 'Error: Unexpected '.$Product['message'].
+                    echo 'Error: Unexpected '.$product['message'].
                     'more than three attempts were made Product id: '.$allProduct[$i]['_id'];
                     echo PHP_EOL;
                     // keep server alive
@@ -102,7 +102,7 @@ function getProduct($storeID)
             // no error
             // Create product node and relationship with Categories
             // in function, also create the relationship
-            createNodeProductNeo4j($Product[$i], $storeID);
+            createNodeProductNeo4j($product, $storeID);
         }
         // pauses the script 500 milliseconds, to conduct a new product query
         usleep(500);
@@ -147,7 +147,7 @@ function getOrder($storeID)
             }
         } else {
             // no error
-            createOrderNeo4j($order[$i]);
+            createOrderNeo4j($order);
         }
         // pauses the script 500 milliseconds, to conduct a new order query
         usleep(500);
