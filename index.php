@@ -147,7 +147,7 @@ function getOrder($storeID)
             }
         } else {
             // no error
-            createOrderNeo4j($order[$i], $storeID);
+            createOrderNeo4j($order[$i]);
         }
         // pauses the script 500 milliseconds, to conduct a new order query
         usleep(500);

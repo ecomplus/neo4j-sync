@@ -206,7 +206,7 @@ function getStoreNeo4j()
     return $res; // return result
 }
 
-function createOrderNeo4j($order, $storeID)
+function createOrderNeo4j($order)
 {
     // retrieves value from global client variable and saves to a local client variable
     $client = $GLOBALS['client'];
@@ -214,21 +214,25 @@ function createOrderNeo4j($order, $storeID)
         $allProducts = $order['items'];
         // parametrs for seach
         $parameters = [
-            'idOrder' => $order['_id'],
-            'idStore' => $storeID,
+            'idOrder' => $order['_id']
         ];
         for ($i = 0; $i < count($allProducts); ++$i) {
             // create relationships with Products and orders
             $parameters['productId'] = $allProducts[$i]['product_id'];
             // marge or match
-            $query = 'MATCH (o:Order {id:{idOrder}, storeID:{idStore}})';
+            $query = 'MATCH (o:Order {id:{idOrder}})';
             // seach product by id
-            $query .= 'MATCH (p:Product {id:{productId}, storeID:{idStore}})';
+            $query .= 'MATCH (p:Product {id:{productId}})';
             // create relationship product
             $query .= 'MERGE (p)-[:Buy]->(o)';
-            // execute query with parametrs
+            // execute query with parameters
             $client->sendCypherQuery($query, $parameters);
         }
+        // mark orders as not new
+        $query = 'MATCH (o:Order {id:{idOrder}}) SET o.new = 0';
+        // execute query with parameters
+        unset($parameters['productId']);
+        $client->sendCypherQuery($query, $parameters);
     }
 }
 
@@ -239,7 +243,7 @@ function getOrderNeo4j($storeID)
     // parametrs for seach
     $parameters = ['idStore' => $storeID];
     //cypher to ..
-    $query = 'MATCH (o:Order {storeID:{idStore}}) RETURN o';
+    $query = 'MATCH (o:Order {storeID:{idStore}, new:1}) RETURN o';
     // function to search orders from a store
     $result = $client->sendCypherQuery($query, $parameters);
     /* get public reponse, because $result is protected
