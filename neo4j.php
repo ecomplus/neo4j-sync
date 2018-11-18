@@ -37,12 +37,12 @@ function createNodeProductNeo4j($Product, $storeID)
     // but check if there are tags, if there are converts them to a string.
     // start string Brands as empty
     $vBrands = '';
-    if (is_array($Product['brands'])) {
+    if (is_array(@$Product['brands'])) {
         //  Check if brands is an array, if true create var Brands
         // for each brand, add the string $Brands
         for ($i = 0; $i < count($Product['brands']); ++$i) {
             // concatenates the brands
-            $vBrands = $vBrands.$Product['brands'][$i].',';
+            $vBrands = $vBrands.$Product['brands'][$i]['name'].',';
         }
     }
     /* create product node, after creating relationship with the store and
@@ -69,7 +69,7 @@ function createNodeProductNeo4j($Product, $storeID)
     // execute query
     $client->sendCypherQuery($query, $parameters);
     // check categories, create category node and relationship with product and store, if the product has category
-    if (is_array($Product['categoreis'])) {
+    if (is_array(@$Product['categoreis'])) {
         // Check if categories is an array, if true create category node
         // Categories is an array, create category node for each category exists in the array
         for ($i = 0; $i < count($Product['categoreis']); ++$i) {
