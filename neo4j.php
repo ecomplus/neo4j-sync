@@ -69,10 +69,10 @@ function createNodeProductNeo4j($Product, $storeID)
     // execute query
     $client->sendCypherQuery($query, $parameters);
     // check categories, create category node and relationship with product and store, if the product has category
-    if (is_array(@$Product['categoreis'])) {
+    if (is_array(@$Product['categories'])) {
         // Check if categories is an array, if true create category node
         // Categories is an array, create category node for each category exists in the array
-        for ($i = 0; $i < count($Product['categoreis']); ++$i) {
+        for ($i = 0; $i < count($Product['categories']); ++$i) {
             $query = 'MATCH (s:Store {id:{idStore}})';
             // query to create Product
             $query .= ' MATCH (p:Product {id:{idProduct}, storeID:{idStore}})';
@@ -85,8 +85,8 @@ function createNodeProductNeo4j($Product, $storeID)
             // parametrs for query
             // parametrs for products, id, name, brands and StoreId
             // parametrs for category, id and name
-            $parameters['idCategory'] = $Product['categoreis'][$i]['_id'];
-            $parameters['nameCategory'] = $Product['categoreis'][$i]['name'];
+            $parameters['idCategory'] = $Product['categories'][$i]['_id'];
+            $parameters['nameCategory'] = $Product['categories'][$i]['name'];
             // execute query
             $client->sendCypherQuery($query, $parameters);
         }
