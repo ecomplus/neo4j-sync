@@ -37,7 +37,7 @@ function getUrl($url, $storeID)
     // Send header to requisition
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
       'Content-Type: application/json',
-      'X-Store-ID:'.$storeID,
+      'X-Store-ID: '.$storeID,
     ]);
     // Execute
     $result = curl_exec($ch);
@@ -56,6 +56,7 @@ function getProduct($storeID)
     // Object with all products
     $varAllProduct = getUrl('https://api.e-com.plus/v1/products.json', $storeID);
     // for each product, create node in NEO4J with the _id, sku, name and brand property.
+    if (!isset($varAllProduct['result'])) return;
 
     // Filter Object to display only products and their properties
     $allProduct = $varAllProduct['result'];
