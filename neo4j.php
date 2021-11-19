@@ -26,6 +26,9 @@ $client = ClientBuilder::create()
 
 function createNodeProductNeo4j($Product, $storeID)
 {
+    if (!@$Product['_id']) {
+        return false;
+    }
     // retrieves value from global client variable and saves to a local client variable
     $client = $GLOBALS['client'];
     /*
@@ -73,22 +76,24 @@ function createNodeProductNeo4j($Product, $storeID)
         // Check if categories is an array, if true create category node
         // Categories is an array, create category node for each category exists in the array
         for ($i = 0; $i < count($Product['categories']); ++$i) {
-            $query = 'MATCH (s:Store {id:{idStore}})';
-            // query to create Product
-            $query .= ' MATCH (p:Product {id:{idProduct}, storeID:{idStore}})';
-            // query to create Category
-            $query .= ' MERGE (c:Category {id:{idCategory}, storeID:{idStore}}) set c.name = {nameCategory}';
-            // query to create relationship Product and Category
-            $query .= ' MERGE (p)-[:BelongsTo]->(c)';
-            // query to create relationship Category and Store
-            $query .= ' MERGE (s)-[:Has]->(c)';
             // parametrs for query
             // parametrs for products, id, name, brands and StoreId
             // parametrs for category, id and name
-            $parameters['idCategory'] = $Product['categories'][$i]['_id'];
-            $parameters['nameCategory'] = $Product['categories'][$i]['name'];
-            // execute query
-            $client->sendCypherQuery($query, $parameters);
+            $parameters['idCategory'] = @$Product['categories'][$i]['_id'];
+            $parameters['nameCategory'] = @$Product['categories'][$i]['name'];
+            if ($parameters['idCategory'] && $parameters['nameCategory']) {
+                $query = 'MATCH (s:Store {id:{idStore}})';
+                // query to create Product
+                $query .= ' MATCH (p:Product {id:{idProduct}, storeID:{idStore}})';
+                // query to create Category
+                $query .= ' MERGE (c:Category {id:{idCategory}, storeID:{idStore}}) set c.name = {nameCategory}';
+                // query to create relationship Product and Category
+                $query .= ' MERGE (p)-[:BelongsTo]->(c)';
+                // query to create relationship Category and Store
+                $query .= ' MERGE (s)-[:Has]->(c)';
+                // execute query
+                $client->sendCypherQuery($query, $parameters);
+            }
         }
     }
 }
@@ -208,6 +213,9 @@ function getStoreNeo4j()
 
 function createOrderNeo4j($order)
 {
+    if (!@$order['_id']) {
+        return false;
+    }
     // retrieves value from global client variable and saves to a local client variable
     $client = $GLOBALS['client'];
     if (is_array($order['items'])) {
@@ -218,15 +226,17 @@ function createOrderNeo4j($order)
         ];
         for ($i = 0; $i < count($allProducts); ++$i) {
             // create relationships with Products and orders
-            $parameters['productId'] = $allProducts[$i]['product_id'];
-            // marge or match
-            $query = 'MATCH (o:Order {id:{idOrder}})';
-            // seach product by id
-            $query .= 'MATCH (p:Product {id:{productId}})';
-            // create relationship product
-            $query .= 'MERGE (p)-[:Buy]->(o)';
-            // execute query with parameters
-            $client->sendCypherQuery($query, $parameters);
+            $parameters['productId'] = @$allProducts[$i]['product_id'];
+            if ($parameters['productId']) {
+                // marge or match
+                $query = 'MATCH (o:Order {id:{idOrder}})';
+                // seach product by id
+                $query .= 'MATCH (p:Product {id:{productId}})';
+                // create relationship product
+                $query .= 'MERGE (p)-[:Buy]->(o)';
+                // execute query with parameters
+                $client->sendCypherQuery($query, $parameters);
+            }
         }
         // mark orders as not new
         $query = 'MATCH (o:Order {id:{idOrder}}) SET o.new = 0';
