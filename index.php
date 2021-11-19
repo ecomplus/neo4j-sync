@@ -156,8 +156,15 @@ function getOrder($storeID)
 }
 
 // script run
-// Get all the stores on Neo4j, which are returned in an array
-$store = getStoreNeo4j();
+$storeId = @$argv[3];
+if ($storeId && preg_match("/^\d+$/", $storeId) && (int)$storeId > 100) {
+    $store = array(
+        "id" => (int)$storeId
+    );
+} else {
+    // Get all the stores on Neo4j, which are returned in an array
+    $store = getStoreNeo4j();
+}
 // for each Store,  get all products and save on Neo4j
 for ($i = 0; $i < count($store); ++$i) {
     echo 'Store #'.$store[$i]['id'];
