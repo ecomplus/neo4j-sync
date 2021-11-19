@@ -64,7 +64,7 @@ function getProduct($storeID)
     $attempts = 0;
     for ($i = 0; $i < count($allProduct); ++$i) {
         $product = getUrl('https://api.e-com.plus/v1/products/'.$allProduct[$i]['_id'].'.json', $storeID);
-        if (array_key_exists('error_code', $product)) {
+        if (is_array($product) && array_key_exists('error_code', $product)) {
             if (412 === $product['status']) {
                 // if the status is equal to 412, no store found with this ID, exclude store in neo4j, if it exists
                 // Function to delete store in Neo4j that no longer exists
@@ -119,7 +119,7 @@ function getOrder($storeID)
     $attempts = 0;
     for ($i = 0; $i < count($allOrder); ++$i) {
         $order = getUrl('https://api.e-com.plus/v1/orders/'.$allOrder[$i]['id'].'.json', $storeID);
-        if (array_key_exists('error_code', $order)) {
+        if (is_array($order) && array_key_exists('error_code', $order)) {
             if (404 === $order['status']) {
                 // delete Order
                 deleteOrderNeo4j($allOrder[$i]['id'], $storeID);
