@@ -158,9 +158,9 @@ function getOrder($storeID)
 // script run
 $storeId = @$argv[3];
 if ($storeId && preg_match("/^\d+$/", $storeId) && (int)$storeId > 100) {
-    $store = array(
+    $store = array(array(
         "id" => (int)$storeId
-    );
+    ));
 } else {
     // Get all the stores on Neo4j, which are returned in an array
     $store = getStoreNeo4j();
